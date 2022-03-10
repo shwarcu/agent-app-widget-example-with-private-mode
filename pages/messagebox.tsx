@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 
-const Home: NextPage = () => {
+const MessageBox: NextPage = () => {
   return (
     <div className={styles.container}>
       <Head>
@@ -12,10 +12,10 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>Private mode!</h1>
+        <h1 className={styles.title}>Private mode! (messagebox)</h1>
       </main>
     </div>
   );
 };
 
-export default Home;
+export default MessageBox;
