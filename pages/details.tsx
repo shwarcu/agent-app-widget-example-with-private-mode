@@ -4,10 +4,13 @@ import * as LiveChat from "@livechat/agent-app-sdk";
 import styles from "../styles/Home.module.css";
 import { useEffect, useState } from "react";
 import { KeyMap } from "@livechat/agent-app-sdk/types/utils/types";
+import dynamic from "next/dynamic";
 
 const Details: NextPage = () => {
+  // https://github.com/mac-s-g/react-json-view/issues/296#issuecomment-803497117
+  const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
   const [widget, setWidget] = useState<LiveChat.IDetailsWidget>();
-  const [threads, setThreads] = useState<KeyMap<boolean>>();
+  const [threads, setThreads] = useState<KeyMap<boolean>>({});
 
   useEffect(() => {
     LiveChat.createDetailsWidget().then((widget) => {
@@ -16,7 +19,7 @@ const Details: NextPage = () => {
   }, []);
 
   useEffect(() => {
-    const initialThreads = widget?.getPrivateModeThreads()?.threads;
+    const initialThreads = widget?.getPrivateModeState()?.threads;
     if (initialThreads) {
       setThreads((prev) => ({ ...prev, ...initialThreads }));
     }
@@ -33,8 +36,13 @@ const Details: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>Private mode! (details)</h1>
-        <p>{JSON.stringify(threads)}</p>
+        <p className={styles.title}>Details widget</p>
+        <br></br>
+        <DynamicReactJson
+          enableClipboard={false}
+          quotesOnKeys={false}
+          src={threads}
+        ></DynamicReactJson>
       </main>
     </div>
   );
