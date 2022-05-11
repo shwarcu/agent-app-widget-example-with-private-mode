@@ -1,14 +1,14 @@
-import type { NextPage } from "next";
-import Head from "next/head";
-import * as LiveChat from "@livechat/agent-app-sdk";
-import styles from "../styles/Home.module.css";
-import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
-import { ICustomerProfile } from "@livechat/agent-app-sdk";
+import type { NextPage } from 'next';
+import Head from 'next/head';
+import * as LiveChat from '@livechat/agent-app-sdk';
+import styles from '../styles/Home.module.css';
+import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
+import { ICustomerProfile, SectionComponentType } from '@livechat/agent-app-sdk';
 
 const Details: NextPage = () => {
   // https://github.com/mac-s-g/react-json-view/issues/296#issuecomment-803497117
-  const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
+  const DynamicReactJson = dynamic(import('react-json-view'), { ssr: false });
   const [widget, setWidget] = useState<LiveChat.IDetailsWidget>();
   const [customer, setCustomer] = useState<ICustomerProfile>();
 
@@ -19,13 +19,37 @@ const Details: NextPage = () => {
   }, []);
 
   useEffect(() => {
-    const initialCustomer = widget?.getCustomerProfile();
-    if (initialCustomer) {
-      setCustomer(initialCustomer);
+    if (widget) {
+      const initialCustomer = widget.getCustomerProfile();
+      if (initialCustomer) {
+        setCustomer(initialCustomer);
+      }
+      widget.on('customer_profile', (update) => {
+        setCustomer(update);
+        widget.modifySection({
+          title: 'Example section',
+          components: [
+            {
+              type: SectionComponentType.Button,
+              data: {
+                label: update.name || 'Customer',
+                id: 'example-button',
+              },
+            },
+          ],
+        });
+        widget.putMessage(`customer_profile.name: ${update.name || 'Customer'}`).then(() => {
+          console.log('[Example integration]', 'message put');
+        });
+      });
+      widget.on('customer_details_section_button_click', ({ buttonId }) => {
+        // perform an action when the button is clicked
+        console.log('[Example integration]', 'button clicked', buttonId);
+        widget.putMessage(`Message was updated because button ${buttonId} was clicked`).then(() => {
+          console.log('[Example integration]', 'message put');
+        });
+      });
     }
-    widget?.on("customer_profile", (update) => {
-      setCustomer(update);
-    });
   }, [widget]);
 
   return (
