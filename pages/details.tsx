@@ -38,9 +38,6 @@ const Details: NextPage = () => {
             },
           ],
         });
-        widget.putMessage(`customer_profile.name: ${update.name || 'Customer'}`).then(() => {
-          console.log('[Example integration]', 'message put');
-        });
       });
       widget.on('customer_details_section_button_click', ({ buttonId }) => {
         // perform an action when the button is clicked
