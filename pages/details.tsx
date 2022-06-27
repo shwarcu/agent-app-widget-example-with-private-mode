@@ -26,6 +26,7 @@ const Details: NextPage = () => {
       }
       widget.on('customer_profile', (update) => {
         setCustomer(update);
+        console.log('[Example integration] Modifying section');
         widget.modifySection({
           title: 'Example section',
           components: [
